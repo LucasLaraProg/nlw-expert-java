@@ -24,6 +24,7 @@ public class QuestionController {
     public List<QuestionResultDTO> findByTechnology(@PathVariable String technology){
         System.out.println("TECHNOLOGY ==="+ technology);
         var result = this.questionRepository.findByTechnology(technology);
+
         var toMap = result.stream().map(question -> mapQuestionToDTO(question))
                 .collect(Collectors.toList());
         return toMap;
@@ -31,17 +32,22 @@ public class QuestionController {
     }
    static QuestionResultDTO mapQuestionToDTO(QuestionEntity question){
       var questionResultDTO= QuestionResultDTO.builder()
+              .id(question.getId())
+              .technology(question.getTechnology())
                .description(question.getDescription()).build();
-      List<AlternativesResultDTO>alternativeResultDTOS=
+
+      List<AlternativesResultDTO>alternativesResultDTOS=
               question.getAlternatives()
-                      .stream().map(alternative -> mapAlternativeResultDTO(alternative))
+                      .stream().map(alternative -> mapAlternativeDTO(alternative))
                       .collect(Collectors.toList());
-      questionResultDTO.setAlternatives(alternativeResultDTOS);
+      questionResultDTO.setAlternatives(alternativesResultDTOS);
       return questionResultDTO;
 
    }
-   static AlternativesResultDTO mapAlternativeResultDTO(AlternativesEntity alternativesResultDTO){
-        return AlternativesResultDTO.builder().description(alternativesResultDTO.getDescription()).build();
+   static AlternativesResultDTO mapAlternativeDTO(AlternativesEntity alternativesResultDTO){
+        return AlternativesResultDTO.builder()
+                .id(alternativesResultDTO.getId())
+                .description(alternativesResultDTO.getDescription()).build();
 
    }
 }
